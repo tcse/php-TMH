@@ -1,7 +1,7 @@
 # 🎵 php-TMH — Telegram Music Hub (by TCSE)
 
 **Telegram Music Hub** — это open-source система, позволяющая **управлять музыкой и контентом через Telegram-бота**, а отображать его на сайте.
-
+![Демо php-TMH: блог и плеер](https://blogs.smartzone.ru/uploads/posts/2025-09/1757001507_photo_2025-09-04_18-56-28.jpg)
 > 🔗 [Демо: tmh.tcse-cms.com](https://tmh.tcse-cms.com)  
 > 💬 [Telegram-канал: @chuyakov_project](https://t.me/chuyakov_project)
 
