@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# /playlist.m3u → ?format=m3u
+RewriteRule ^playlist\.m3u$ core/generate_playlist.php?format=m3u [L,QSA]
+
+# /playlist.pls → ?format=pls
+RewriteRule ^playlist\.pls$ core/generate_playlist.php?format=pls [L,QSA]
+
+# /playlist.xspf → ?format=xspf
+RewriteRule ^playlist\.xspf$ core/generate_playlist.php?format=xspf [L,QSA]
+
+# Запрещаем доступ к .json, .log
+<FilesMatch "\.(json|log)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
