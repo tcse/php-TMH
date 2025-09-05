@@ -50,18 +50,40 @@ if (!is_array($db) || !isset($db[$fileId])) {
     exit;
 }
 
-// === Увеличение счётчика ===
-$db[$fileId]['count_play'] = ($db[$fileId]['count_play'] ?? 0) + 1;
-$updatedCount = $db[$fileId]['count_play'];
+// === Увеличение счётчика (только если включено) ===
+if ($config['enable_play_count']) {
+    $debounceSec = $config['play_count_debounce_sec'] ?? 30;
 
-// === Сохранение ===
-if (!file_put_contents($dbFile, json_encode($db, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT))) {
-    if ($enableLogging) {
-        error_log("[update_play.php] Failed to write to database: $dbFile");
+    // Анти-флуд: один раз в N секунд с IP
+    $logFile = "$logDir/update_play.log";
+    if (file_exists($logFile)) {
+        $logs = array_filter(file($logFile, FILE_IGNORE_NEW_LINES));
+        $recent = array_filter($logs, function($log) use ($fileId, $remoteAddr, $debounceSec) {
+            if (preg_match('/Play incremented: (\S+) \| IP: (\S+) \|/', $log, $m)) {
+                $ts = strtotime(substr($log, 1, 19));
+                return $m[1] === $fileId && $m[2] === $remoteAddr && (time() - $ts) < $debounceSec;
+            }
+            return false;
+        });
+        if (!empty($recent)) {
+            // Пропускаем запись, но отвечаем 200
+            echo json_encode(['success' => true, 'message' => 'Debounced', 'new_count' => $db[$fileId]['count_play']]);
+            exit;
+        }
     }
-    http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Failed to save']);
-    exit;
+
+    // Увеличиваем и сохраняем
+    $db[$fileId]['count_play'] = ($db[$fileId]['count_play'] ?? 0) + 1;
+    $updatedCount = $db[$fileId]['count_play'];
+
+    if (!file_put_contents($dbFile, json_encode($db, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX)) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Write failed']);
+        exit;
+    }
+} else {
+    // Счётчик выключен
+    $updatedCount = $db[$fileId]['count_play'] ?? 0;
 }
 
 // === Логирование (если включено) ===
