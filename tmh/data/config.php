@@ -1,11 +1,11 @@
 <?php
-// TMH (Telegram Music Hub) by TCSE — v1.0
+// TMH (Telegram Music Hub) by TCSE — v1.0.1
 // config.php — централизованная конфигурация
 // Важно: НЕ ДОБАВЛЯЙТЕ ПРОБЕЛЫ В КОНЦЕ СТРОК!
 
 return [
     // === ОСНОВНЫЕ НАСТРОЙКИ ===
-    'bot_token' => '1234567890:abcdefghijklmnopqrstuvwxyzABCDE12345g',
+    'bot_token' => '8481229383:AAGV_tRJRH-HCsju2hQX9bunIKClSn_hGPg',
     // Токен вашего Telegram-бота. Получить: @BotFather
 
     'base_url' => 'https://tmh.tcse-cms.com/tmh',
@@ -48,7 +48,7 @@ return [
 
     // === МОДЕРАЦИЯ ===
     'moderation' => [
-        'enable' => false,
+        'enable' => true,
         // Включена ли модерация (true) или все треки добавляются сразу (false)
 
         'admin_chat_ids' => ['757940529'],
@@ -122,4 +122,9 @@ return [
         'music_channel_file' => __DIR__ . '/music_channel.json',
         // Путь к файлу треков из канала
     ],
+
+    // === СЧЁТЧИКИ ===
+    'enable_play_count'       => true,   // Включить счётчик прослушиваний
+    'enable_download_count'   => true,   // Включить счётчик скачиваний
+    'play_count_debounce_sec' => 30,     // Минимальный интервал между учётом прослушивания (защита от флуда)
 ];
