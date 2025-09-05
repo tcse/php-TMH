@@ -5,7 +5,7 @@
 
 return [
     // === ОСНОВНЫЕ НАСТРОЙКИ ===
-    'bot_token' => '8481229383:AAGV_tRJRH-HCsju2hQX9bunIKClSn_hGPg',
+    'bot_token' => '',
     // Токен вашего Telegram-бота. Получить: @BotFather
 
     'base_url' => 'https://tmh.tcse-cms.com/tmh',
