@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: track.title,
                     artist: track.performer || 'Неизвестный',
                     artwork: [{ 
-                        src: track.cover || 'https://placehold.co/512x512/121212/ffffff?text=🎵', 
+                        src: track.cover || 'https://placehold.co/512x512/121212/ffffff?text=TMH+by+TCSE', 
                         sizes: '512x512', 
                         type: 'image/png' 
                     }]
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 allBtn.className = 'category-item';
                 allBtn.innerHTML = `
                     <div class="category-thumbnail">
-                        <img src="logo_512.jpg" alt="Все">
+                        <img src="https://placehold.co/512x512/f39c12/ffffff?text=ALL" alt="Все">
                     </div>
                     <div class="category-details">
                         <div class="category-name">Все треки</div>
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 likedBtn.className = 'category-item';
                 likedBtn.innerHTML = `
                     <div class="category-thumbnail">
-                        <img src="logo_1280.jpg" alt="Избранное">
+                        <img src="https://placehold.co/512x512/3498db/ffffff?text=Liked" alt="Избранное">
                     </div>
                     <div class="category-details">
                         <div class="category-name">Избранное</div>
