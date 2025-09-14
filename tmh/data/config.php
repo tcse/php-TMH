@@ -123,6 +123,46 @@ return [
         // Путь к файлу треков из канала
     ],
 
+    // === RSS ЛЕНТА ===
+    'rss' => [
+        'enable' => true,
+        // Включена ли RSS-лента (можно отключить для скрытых проектов)
+
+        'title' => $channel['blog_title'] ?? 'Музыкальный хаб',
+        // Заголовок RSS-канала. По умолчанию — из blog_title
+
+        'description' => $channel['site_description'] ?? 'Обновления из Telegram-канала',
+        // Описание ленты
+
+        'link' => $config['webapp_url'] ?? ($config['base_url'] . '/blog.html'),
+        // Ссылка на сайт/блог
+
+        'feed_url' => $config['base_url'] . '/core/generate_rss.php',
+        // Публичный URL самой RSS-ленты
+
+        'max_items' => 20,
+        // Максимальное количество записей в ленте
+
+        'include_photos' => true,
+        // Включать ли фото в `<description>` и `<enclosure>`
+
+        'include_audio' => false,
+        // Включать ли аудио-файл как `<enclosure>` (может быть тяжело для ридеров)
+
+        'show_full_text' => true,
+        // Показывать полный текст поста или только анонс
+
+        'language' => 'ru-RU',
+        // Язык RSS-канала
+
+        'update_period' => 'hourly',
+        // Частота обновления (для <sy:updatePeriod>)
+        // Возможные значения: always, hourly, daily, weekly, monthly, never
+
+        'generator' => 'TMH by TCSE v1.0',
+        // Имя генератора (видно в некоторых ридерах)
+    ],
+
     // === СЧЁТЧИКИ ===
     'enable_play_count'       => true,   // Включить счётчик прослушиваний
     'enable_download_count'   => true,   // Включить счётчик скачиваний
