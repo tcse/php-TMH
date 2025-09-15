@@ -6,7 +6,7 @@
 // ✅ Исправлена работа всех команд
 
 // === Загрузка конфигурации ===
-$config = require_once __DIR__ . '/../data/config.php'; // ✅
+$config = require_once __DIR__ . '/../data/config4.php'; // ✅
 
 // === Извлечение параметров ===
 $token = $config['bot_token'];

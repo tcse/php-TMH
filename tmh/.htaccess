@@ -1,16 +1,30 @@
 RewriteEngine On
+RewriteBase /tmh/
 
-# /playlist.m3u → ?format=m3u
+# === 1. Блог: /blog/ → blog.php (список) ===
+RewriteRule ^blog/$ blog.php [L,QSA]
+RewriteRule ^blog$ blog.php [L,QSA]  # Без слеша
+
+# === 2. Блог: /blog/page/2 → blog.php?page=2 ===
+RewriteRule ^blog/page/(\d+)/?$ blog.php?page=$1 [L,QSA]
+
+# === 3. Блог: /blog/post/252.html → blog.php?p=post/252 ===
+RewriteRule ^blog/post/(\d+)\.html$ blog.php?p=post/$1 [L,QSA]
+
+# === 4. Блог: /blog/post/252 (без .html) ===
+RewriteRule ^blog/post/(\d+)/?$ blog.php?p=post/$1 [L,QSA]
+
+# === 5. Плейлисты: /playlist.m3u → generate_playlist.php?format=m3u ===
 RewriteRule ^playlist\.m3u$ core/generate_playlist.php?format=m3u [L,QSA]
-
-# /playlist.pls → ?format=pls
 RewriteRule ^playlist\.pls$ core/generate_playlist.php?format=pls [L,QSA]
-
-# /playlist.xspf → ?format=xspf
 RewriteRule ^playlist\.xspf$ core/generate_playlist.php?format=xspf [L,QSA]
 
-# Запрещаем доступ к .json, .log
+# === 6. Запрещаем доступ к .json, .log ===
 <FilesMatch "\.(json|log)$">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
+
+# === 7. Статика: если файл существует (CSS, JS, изображения) — отдать напрямую ===
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
