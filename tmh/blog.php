@@ -43,6 +43,17 @@ $offset = ($page - 1) * $perPage;
 $paginatedPosts = array_slice($posts, $offset, $perPage);
 $totalPages = ceil(count($posts) / $perPage);
 
+// === Вывод новостей по хештегам  ===
+$tagFilter = $_GET['tag'] ?? null;
+
+if ($tagFilter) {
+    $filteredPosts = array_filter($posts, function($p) use ($tagFilter) {
+        $text = ($p['text'] ?? '') . ' ' . ($p['caption'] ?? '');
+        return stripos($text, '#' . $tagFilter) !== false;
+    });
+    $paginatedPosts = array_slice(array_values($filteredPosts), $offset, $perPage);
+}
+
 // === Передаём переменные в шаблоны ===
 $canonicalUrl = $postId 
     ? $config['base_url'] . '/tmh/blog/post/' . $post['id'] . '.html'

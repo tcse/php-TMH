@@ -1,9 +1,9 @@
 <?php
+// /tmh/core/channel_proxy.php
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache');
 
-// === Правильный путь к config.php ===
 $configFile = __DIR__ . '/../data/config.php';
 if (!file_exists($configFile)) {
     http_response_code(500);
@@ -12,45 +12,44 @@ if (!file_exists($configFile)) {
 }
 
 $config = require_once $configFile;
-
-// === Путь к posts.json из config.php ===
-$postsFile = $config['channel']['posts_file'] ?? __DIR__ . '/../data/posts.json';
+$channel = $config['channel'] ?? [];
+$postsFile = $channel['posts_file'] ?? __DIR__ . '/../data/posts.json';
 
 if (!file_exists($postsFile)) {
-    echo json_encode(['posts' => []], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    echo json_encode(['posts' => []], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// === Читаем и декодируем JSON ===
-$postsContent = file_get_contents($postsFile);
-$posts = json_decode($postsContent, true);
-
+$posts = json_decode(file_get_contents($postsFile), true);
 if (json_last_error() !== JSON_ERROR_NONE) {
     http_response_code(500);
-    echo json_encode(['error' => 'Invalid JSON in posts.json: ' . json_last_error_msg()], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['error' => 'Invalid JSON'], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// === Генерируем photo_proxy и photo_proxies ===
-$baseUrl = $config['base_url'] ?? 'https://tmh.tcse-cms.com/tmh';
+$baseUrl = rtrim($config['base_url'], '/');
+$flatPosts = [];
 
-$flatPosts = array_values($posts);
-foreach ($flatPosts as &$post) {
-    // Одиночное фото
-    if (!empty($post['photo_file_id'])) {
-        $post['photo_proxy'] = $baseUrl . '/core/blog_cover.php?file_id=' . urlencode($post['photo_file_id']);
+foreach ($posts as $post) {
+    $item = [
+        'id' => $post['id'] ?? null,
+        'date' => $post['date'] ?? null,
+        'text' => $post['text'] ?? '',
+        'caption' => $post['caption'] ?? '',
+        'photo_file_id' => $post['photo_file_id'] ?? '',
+        'photos' => $post['photos'] ?? [],
+        'audio' => $post['audio'] ?? null,
+        'video' => $post['video'] ?? null,
+        'document' => $post['document'] ?? null,
+        'entities' => $post['entities'] ?? [],           // ✅ ДОБАВЛЕНО
+        'caption_entities' => $post['caption_entities'] ?? [] // ✅ ДОБАВЛЕНО
+    ];
+
+    if (!empty($item['photo_file_id'])) {
+        $item['photo_proxy'] = $baseUrl . '/core/blog_cover.php?file_id=' . urlencode($item['photo_file_id']);
     }
 
-    // Галерея
-    if (!empty($post['photos'])) {
-        $post['photo_proxies'] = [];
-        foreach ($post['photos'] as $photo) {
-            $post['photo_proxies'][] = $baseUrl . '/core/blog_cover.php?file_id=' . urlencode($photo['file_id']);
-        }
-    }
+    $flatPosts[] = $item;
 }
 
-// === Возвращаем в формате { "posts": [...] } ===
-echo json_encode([
-    'posts' => $flatPosts
-], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+echo json_encode(['posts' => $flatPosts], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

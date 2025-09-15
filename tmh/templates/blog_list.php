@@ -11,8 +11,23 @@
     }
     $title = htmlspecialchars(mb_strlen($title) > 60 ? mb_substr($title, 0, 60) . '...' : $title);
 
-    // === Текст: анонс ===
-    $excerpt = htmlspecialchars(mb_substr(strip_tags($item['text']), 0, 120)) . '...';
+
+    // === Текст для анонса: text или caption без заголовка ===
+$rawText = $item['text'] ?? '';
+if (empty($rawText) && !empty($item['caption'])) {
+    $captionLines = explode("\n", $item['caption']);
+    array_shift($captionLines); // удаляем первую строку (уже в заголовке)
+    $rawText = implode("\n", $captionLines);
+}
+
+// Обрезаем до N символов (из config.php)
+$maxExcerptLength = $channel['excerpt_length'] ?? 150;
+$excerpt = mb_strlen(strip_tags($rawText)) > $maxExcerptLength 
+    ? mb_substr(strip_tags($rawText), 0, $maxExcerptLength) . '...' 
+    : strip_tags($rawText);
+
+// Экранируем для вывода
+$excerpt = htmlspecialchars($excerpt);
 
     // === Дата ===
     $date = date('d.m.Y', strtotime($item['date']));

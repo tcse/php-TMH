@@ -19,6 +19,8 @@ RewriteRule ^playlist\.m3u$ core/generate_playlist.php?format=m3u [L,QSA]
 RewriteRule ^playlist\.pls$ core/generate_playlist.php?format=pls [L,QSA]
 RewriteRule ^playlist\.xspf$ core/generate_playlist.php?format=xspf [L,QSA]
 
+RewriteRule ^blog/tag/(.+)\.html$ blog.php?t=tag&tag=$1 [L,QSA]
+
 # === 6. Запрещаем доступ к .json, .log ===
 <FilesMatch "\.(json|log)$">
     Order Allow,Deny
