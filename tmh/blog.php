@@ -1,5 +1,6 @@
 <?php
-// /tmh/blog.php
+// TMH (Telegram Music Hub) by TCSE — v1.0
+// /tmh/blog.php - v1.1
 header('Content-Type: text/html; charset=utf-8');
 
 // === Загрузка конфига ===
