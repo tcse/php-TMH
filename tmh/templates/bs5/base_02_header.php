@@ -21,7 +21,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <button class="theme-toggle" id="themeToggle">
+                        <button class="theme-toggle nav-link" id="themeToggle">
                             <i class="bi bi-moon-stars"></i>
                         </button>
                     </li>

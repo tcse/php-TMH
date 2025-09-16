@@ -35,35 +35,76 @@ $excerpt = htmlspecialchars($excerpt);
     // === URL записи ===
     $url = 'blog/post/' . $item['id'] . '.html';
 
-    // === Определение обложки ===
+    // === Определение обложки: чёткий приоритет ===
     $coverUrl = '';
 
-    // 1. Фото (одиночное или из галереи)
+    // 1. Фото из Telegram (высший приоритет)
     if (!empty($item['photos']) && is_array($item['photos'])) {
         $firstPhoto = $item['photos'][0]['file_id'];
         $coverUrl = 'core/blog_cover.php?file_id=' . urlencode($firstPhoto);
     } elseif (!empty($item['photo_file_id'])) {
         $coverUrl = 'core/blog_cover.php?file_id=' . urlencode($item['photo_file_id']);
     }
-    // 2. Нет фото → проверяем тип медиа
-    elseif (!empty($item['audio']['file_id'])) {
-        $coverUrl = 'https://placehold.co/400x400/121212/ffffff?text=audio';
-    } elseif (!empty($item['video']['file_id'])) {
-        $coverUrl = 'https://placehold.co/400x400/3498db/ffffff?text=video';
-    } elseif (!empty($item['document']['file_id'])) {
-        $coverUrl = 'https://placehold.co/400x400/e74c3c/ffffff?text=document';
+
+    // 2. Нет фото → пробуем YouTube
+    if (empty($coverUrl)) {
+        $sourceText = $item['text'] ?? '';
+        if (empty($sourceText) && !empty($item['caption'])) {
+            $sourceText = $item['caption'];
+        }
+        preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $sourceText, $matches);
+        if (!empty($matches[1])) {
+            $videoId = $matches[1];
+            $coverUrl = 'https://img.youtube.com/vi/' . $videoId . '/0.jpg';
+        }
     }
-    // 3. Нет ничего → общая заглушка
-    else {
+
+    // 3. Нет фото и YouTube → проверяем тип медиа
+    if (empty($coverUrl)) {
+        if (!empty($item['audio']['file_id'])) {
+            $coverUrl = 'https://placehold.co/400x400/121212/ffffff?text=audio';
+        } elseif (!empty($item['video']['file_id'])) {
+            $coverUrl = 'https://placehold.co/400x400/3498db/ffffff?text=video';
+        } elseif (!empty($item['document']['file_id'])) {
+            $coverUrl = 'https://placehold.co/400x400/e74c3c/ffffff?text=document';
+        }
+    }
+
+    // 4. Ничего не подошло → общая заглушка
+    if (empty($coverUrl)) {
         $coverUrl = 'https://placehold.co/400x400/9b59b6/ffffff?text=no+image';
     }
 
     // Убедимся, что нет лишних пробелов
     $coverUrl = trim($coverUrl);
+
+    // === Определяем, нужно ли добавлять иконку "Play" ===
+    $hasYouTube = !empty($matches[1]) && empty($item['photo_file_id']) && empty($item['photos']);
+
 ?>
     <div class="col-md-6 col-lg-4">
         <article itemscope itemtype="https://schema.org/BlogPosting" class="card h-100">
-            <img src="<?= $coverUrl ?>" alt="<?= $title ?>" class="card-img-top" itemprop="image" loading="lazy">
+            
+            <div class="position-relative">
+                <a href="<?= $url ?>" class="text-decoration-none">
+                    <img 
+                        src="<?= $coverUrl ?>" 
+                        alt="<?= $title ?>" 
+                        class="card-img-top" 
+                        itemprop="image" 
+                        loading="lazy"
+                    >
+                    <?php if ($hasYouTube): ?>
+                        <div class="youtube-play-overlay">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-play-circle-fill" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="8" fill="#ff0000"/>
+                                <path d="M11.596 8.596a.5.5 0 0 1 0 .708l-5 5a.5.5 0 0 1-.708-.708L10.293 8.5 6.293 4.404a.5.5 0 0 1 .708-.708l5 5z" fill="white"/>
+                            </svg>
+                        </div>
+                    <?php endif; ?>
+                </a>
+            </div>
+
             <div class="card-body d-flex flex-column">
                 <h3 class="card-title" itemprop="headline">
                     <a href="<?= $url ?>" class="text-decoration-none text-success"><?= $title ?></a>

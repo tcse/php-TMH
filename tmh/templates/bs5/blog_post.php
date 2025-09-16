@@ -4,8 +4,20 @@
 </div>
 
 <article itemscope itemtype="https://schema.org/BlogPosting">
+    <?php
+    // === Определение заголовка ===
+    $title = '';
+    if (!empty($post['caption'])) {
+        $lines = explode("\n", trim($post['caption']));
+        $title = trim($lines[0]);
+    } elseif (!empty($post['text'])) {
+        $lines = explode("\n", trim($post['text']));
+        $title = trim($lines[0]);
+    }
+    $title = htmlspecialchars($title ?: 'Запись без названия');
+    ?>
     <header class="mb-4">
-        <h1 itemprop="headline"><?= htmlspecialchars($title) ?></h1>
+        <h1 itemprop="headline"><?= $title ?></h1>
         <time datetime="<?= $post['date'] ?>" itemprop="datePublished" class="text-muted">
             <?= date('d.m.Y H:i', strtotime($post['date'])) ?>
         </time>
@@ -108,6 +120,8 @@ if (empty($sourceText) && !empty($post['caption_entities'])) {
 
 // === Применяем форматирование ===
 $formattedText = applyEntities($sourceText, $entities);
+
+
 
 // === Обработка YouTube-ссылок → iframe ===
 $formattedText = preg_replace_callback(

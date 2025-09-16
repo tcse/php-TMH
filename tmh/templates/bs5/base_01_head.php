@@ -157,6 +157,10 @@
             font-size: 0.9rem;
         }
 
+        .text-muted {
+            color: var(--text) !important;
+        }
+
         .card {
             border: 1px solid var(--border);
             border-radius: 12px;
@@ -192,9 +196,68 @@
 
         .swiper-slide img {
             width: 100%;
-            height: 100%;
+            height: 70vh;
             object-fit: cover;
+            cursor: grab;
         }
+
+        .swiper-slide img:active {
+            cursor: grabbing;
+        }
+
+        .gallery-title {
+            font-size: 1.1rem;
+            margin: 1rem 0 0.5rem 0;
+            color: var(--accent);
+        }
+
+        .youtube-video {
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            max-width: 640px;
+        }
+
+        .articleBody pre {
+		    background: #1e1e1e;
+		    padding: 1rem;
+		    border-radius: 8px;
+		    overflow-x: auto;
+		    margin: 1rem 0;
+		}
+		.articleBody code {
+		    background: #333;
+		    padding: 0.2rem 0.4rem;
+		    border-radius: 4px;
+		    font-family: 'Courier New', monospace;
+		}
+
+        /* Overlay для YouTube */
+        .youtube-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .youtube-play-overlay svg {
+            transition: transform 0.2s;
+        }
+
+        .youtube-play-overlay:hover svg {
+            transform: scale(1.1);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+
     </style>
 </head>
 </head>

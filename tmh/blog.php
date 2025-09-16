@@ -3,7 +3,7 @@
 header('Content-Type: text/html; charset=utf-8');
 
 // === Загрузка конфига ===
-$config = require_once __DIR__ . '/data/config4.php';
+$config = require_once __DIR__ . '/data/config.php';
 $channel = $config['channel'] ?? [];
 $postsFile = $channel['posts_file'] ?? __DIR__ . '/data/posts.json';
 
@@ -43,7 +43,6 @@ $offset = ($page - 1) * $perPage;
 $paginatedPosts = array_slice($posts, $offset, $perPage);
 $totalPages = ceil(count($posts) / $perPage);
 
-// === Вывод новостей по хештегам  ===
 $tagFilter = $_GET['tag'] ?? null;
 
 if ($tagFilter) {
@@ -67,8 +66,13 @@ $description = $postId
     ? mb_substr(strip_tags($post['text'] ?? ''), 0, 150)
     : $channel['site_description'];
 
-// === Подключаем шаблоны ===
-include __DIR__ . '/templates/head.php';
-include __DIR__ . '/templates/header.php';
-include __DIR__ . '/templates/main.php';
-include __DIR__ . '/templates/body.php';
+
+$theme = $config['theme']['active'] ?? 'bs5';
+$templatePath = __DIR__ . '/' . ($config['theme']['path'] ?? 'templates') . '/' . $theme;
+
+// Подключаем шаблоны
+include $templatePath . '/base_01_head.php';
+include $templatePath . '/base_02_header.php';
+include $templatePath . '/base_03_main.php';
+include $templatePath . '/base_04_footer.php';
+include $templatePath . '/base_05_bottom.php';
